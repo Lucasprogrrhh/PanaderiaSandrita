@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Sandrita | Panadería y Confitería Artesanal</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&amp;family=Montserrat:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./src/styles.css">
+  
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+              "on-surface": "#1a1c1a",
+              "on-tertiary-fixed": "#1d1b16",
+              "tertiary-container": "#3c3a34",
+              "on-background": "#1a1c1a",
+              "surface": "#faf9f6",
+              "inverse-primary": "#e1c1a4",
+              "on-secondary-container": "#785a1a",
+              "error": "#ba1a1a",
+              "inverse-surface": "#2f312f",
+              "tertiary-fixed-dim": "#cbc6bd",
+              "error-container": "#ffdad6",
+              "secondary-fixed": "#ffdea5",
+              "on-error": "#ffffff",
+              "secondary-container": "#fed488",
+              "primary-fixed-dim": "#e1c1a4",
+              "on-tertiary-fixed-variant": "#494640",
+              "on-primary-fixed-variant": "#59422c",
+              "tertiary-fixed": "#e7e2d9",
+              "tertiary": "#26241f",
+              "surface-container-low": "#f4f3f1",
+              "on-primary": "#ffffff",
+              "on-secondary": "#ffffff",
+              "on-tertiary": "#ffffff",
+              "surface-container": "#efeeeb",
+              "surface-bright": "#faf9f6",
+              "on-secondary-fixed-variant": "#5d4201",
+              "inverse-on-surface": "#f2f1ee",
+              "on-secondary-fixed": "#261900",
+              "on-primary-container": "#bd9f83",
+              "surface-dim": "#dbdad7",
+              "secondary": "#775a19",
+              "on-error-container": "#93000a",
+              "on-primary-fixed": "#291806",
+              "background": "#faf9f6",
+              "outline": "#80756c",
+              "on-surface-variant": "#4e453d",
+              "primary-fixed": "#fedcbe",
+              "surface-container-high": "#e9e8e5",
+              "surface-tint": "#725a42",
+              "on-tertiary-container": "#a8a39c",
+              "primary-container": "#4b3621",
+              "surface-container-highest": "#e3e2e0",
+              "primary": "#33210d",
+              "outline-variant": "#d2c4ba",
+              "surface-container-lowest": "#ffffff",
+              "secondary-fixed-dim": "#e9c176",
+              "surface-variant": "#e3e2e0"
+          },
+          "borderRadius": {
+              "DEFAULT": "0.125rem",
+              "lg": "0.25rem",
+              "xl": "0.5rem",
+              "full": "0.75rem"
+          },
+          "spacing": {
+              "container-max": "1200px",
+              "section-gap": "80px",
+              "margin-mobile": "16px",
+              "gutter": "24px",
+              "margin-desktop": "48px",
+              "base": "8px"
+          },
+          "fontFamily": {
+              "headline-sm": ["Playfair Display"],
+              "body-lg": ["Montserrat"],
+              "body-md": ["Montserrat"],
+              "display-lg-mobile": ["Playfair Display"],
+              "headline-md": ["Playfair Display"],
+              "display-lg": ["Playfair Display"],
+              "label-md": ["Montserrat"],
+              "label-sm": ["Montserrat"]
+          },
+          "fontSize": {
+              "headline-sm": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+              "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+              "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+              "display-lg-mobile": ["36px", {"lineHeight": "1.2", "fontWeight": "700"}],
+              "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}],
+              "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+              "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
+              "label-sm": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.03em", "fontWeight": "500"}]
+          }
+        },
+      },
+    }
+  </script>
+  <style>
+    .reveal { opacity: 0; transform: translateY(20px); transition: all 0.8s ease-out; }
+    .reveal.active { opacity: 1; transform: translateY(0); }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24; }
+  </style>
+</head>
+<body class="bg-surface text-on-surface dark:bg-inverse-surface dark:text-inverse-on-surface font-body-md overflow-x-hidden transition-colors duration-300">
+
+<!-- TopAppBar -->
+<header class="bg-surface/90 dark:bg-primary/95 backdrop-blur-md border-b border-outline/10 fixed top-0 w-full z-50 transition-colors duration-300">
+  <nav class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
+    <div class="flex items-center gap-4">
+      <button class="md:hidden text-primary dark:text-primary-fixed-dim" id="menuTrigger">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+      <a class="font-headline-sm text-headline-sm font-semibold tracking-tight text-primary dark:text-primary-fixed" href="#">Sandrita</a>
+    </div>
+    
+    <div class="hidden md:flex items-center space-x-8">
+      <a class="text-secondary dark:text-secondary-fixed font-semibold font-label-md text-label-md transition-colors duration-300" href="#inicio">Inicio</a>
+      <a class="text-on-surface-variant dark:text-tertiary-fixed-dim font-label-md text-label-md hover:text-secondary dark:hover:text-secondary-fixed transition-colors duration-300" href="#nosotros">Nosotros</a>
+      <a class="text-on-surface-variant dark:text-tertiary-fixed-dim font-label-md text-label-md hover:text-secondary dark:hover:text-secondary-fixed transition-colors duration-300" href="#productos">Productos</a>
+      <a class="text-on-surface-variant dark:text-tertiary-fixed-dim font-label-md text-label-md hover:text-secondary dark:hover:text-secondary-fixed transition-colors duration-300" href="#contacto">Contacto</a>
+    </div>
+    
+    <div class="flex items-center gap-2 md:gap-4">
+      <!-- Dark Mode Switcher -->
+      <button id="themeToggle" class="p-2 rounded-full hover:bg-outline/10 text-on-surface-variant dark:text-tertiary-fixed-dim transition-colors" title="Cambiar tema">
+        <span class="material-symbols-outlined text-2xl">dark_mode</span>
+      </button>
+      
+      <!-- Shopping Cart Button with Badge -->
+      <button id="cartTrigger" class="relative p-2 rounded-full hover:bg-outline/10 text-on-surface-variant dark:text-tertiary-fixed-dim transition-colors" title="Ver mi carrito">
+        <span class="material-symbols-outlined text-2xl">shopping_cart</span>
+        <span class="cart-badge absolute top-0 right-0 bg-secondary text-on-secondary text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center hidden">0</span>
+      </button>
+      
+      <a class="bg-primary text-on-primary dark:bg-primary-fixed dark:text-on-primary-fixed px-6 py-2 rounded-full font-label-md text-label-md hover:opacity-85 transition-opacity hidden sm:inline-block" href="#pedidos">Hacer un pedido</a>
+    </div>
+  </nav>
+</header>
+
+<!-- NavigationDrawer (Mobile menu) -->
+<div class="fixed inset-0 bg-black/50 z-[100] hidden transition-opacity duration-300" id="drawer">
+  <aside class="fixed inset-y-0 left-0 w-80 bg-surface dark:bg-inverse-surface shadow-xl transform -translate-x-full transition-transform duration-300 ease-in-out">
+    <div class="flex flex-col h-full py-base">
+      <div class="px-6 py-8 flex justify-between items-center">
+        <span class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed">Sandrita</span>
+        <button id="closeDrawer" class="text-on-surface dark:text-white"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <div class="flex-1 px-4 space-y-2">
+        <a class="flex items-center gap-4 bg-secondary-container text-on-secondary-container rounded-full px-4 py-3" href="#inicio"><span class="material-symbols-outlined">home</span>Inicio</a>
+        <a class="flex items-center gap-4 text-on-surface-variant dark:text-tertiary-fixed-dim px-4 py-3 hover:bg-surface-container-high rounded-full" href="#nosotros"><span class="material-symbols-outlined">history</span>Nosotros</a>
+        <a class="flex items-center gap-4 text-on-surface-variant dark:text-tertiary-fixed-dim px-4 py-3 hover:bg-surface-container-high rounded-full" href="#productos"><span class="material-symbols-outlined">bakery_dining</span>Productos</a>
+        <a class="flex items-center gap-4 text-on-surface-variant dark:text-tertiary-fixed-dim px-4 py-3 hover:bg-surface-container-high rounded-full" href="#pedidos"><span class="material-symbols-outlined">shopping_cart</span>Pedidos</a>
+        <a class="flex items-center gap-4 text-on-surface-variant dark:text-tertiary-fixed-dim px-4 py-3 hover:bg-surface-container-high rounded-full" href="#contacto"><span class="material-symbols-outlined">contact_support</span>Contacto</a>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<!-- Cajón del Carrito de Compras (Cart Drawer) -->
+<div id="cartDrawer" class="fixed inset-0 z-[110] hidden transition-opacity duration-300 bg-black/50 backdrop-blur-sm" aria-modal="true" role="dialog">
+  <aside id="cartDrawerContent" class="fixed inset-y-0 right-0 w-full max-w-md bg-surface dark:bg-inverse-surface shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col h-full border-l border-outline/10 dark:border-white/10">
+    <div class="p-6 border-b border-outline/10 dark:border-white/10 flex justify-between items-center bg-surface-container-low dark:bg-primary-container/10">
+      <div class="flex items-center gap-2 text-primary dark:text-primary-fixed">
+        <span class="material-symbols-outlined text-2xl">shopping_cart</span>
+        <h2 class="font-headline-sm text-headline-sm font-semibold">Tu Carrito</h2>
+      </div>
+      <button id="closeCart" class="text-on-surface-variant hover:text-primary dark:text-tertiary-fixed-dim dark:hover:text-white p-2 rounded-full hover:bg-outline/10" title="Cerrar carrito">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    
+    <!-- Contenido del Carrito (Scrollable) -->
+    <div class="flex-1 overflow-y-auto p-6 space-y-4">
+      <!-- Estado Vacío -->
+      <div id="cartEmptyState" class="text-center py-20 space-y-4">
+        <span class="material-symbols-outlined text-outline text-7xl block">bakery_dining</span>
+        <p class="font-label-md text-label-md text-outline">¿Todavía no agregaste nada?</p>
+        <p class="text-sm text-outline-variant max-w-xs mx-auto">Explorá nuestro catálogo de delicias y agregá tus preferidos para armar tu pedido.</p>
+      </div>
+      
+      <!-- Listado de Productos -->
+      <div id="cartDrawerItems" class="divide-y divide-outline/10 dark:divide-white/10">
+        <!-- Renderizado dinámico desde JS -->
+      </div>
+    </div>
+    
+    <!-- Resumen de Totales y Botón de Checkout -->
+    <div id="cartMainContent" class="p-6 bg-surface-container dark:bg-primary-container/20 border-t border-outline/10 dark:border-white/10 space-y-6 hidden">
+      <div class="space-y-2">
+        <div class="flex justify-between items-center text-on-surface-variant dark:text-tertiary-fixed-dim">
+          <span class="text-sm">Envío / Retiro</span>
+          <span class="text-sm font-semibold">A coordinar</span>
+        </div>
+        <div class="flex justify-between items-center text-primary dark:text-primary-fixed border-t border-outline/10 dark:border-white/10 pt-4">
+          <span class="font-label-md text-label-md font-bold">Total Estimado</span>
+          <span id="cartTotalPrice" class="font-headline-sm text-headline-sm font-bold text-secondary dark:text-secondary-fixed">$0</span>
+        </div>
+      </div>
+      
+      <a href="#pedidos" id="checkoutBtn" class="w-full bg-primary text-on-primary dark:bg-primary-fixed dark:text-on-primary-fixed py-4 rounded-full font-label-md text-label-md tracking-widest uppercase flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+        <span class="material-symbols-outlined text-sm">assignment_turned_in</span>
+        Confirmar en Formulario
+      </a>
+    </div>
+  </aside>
+</div>
+
+<!-- Botón Flotante del Carrito para Móviles/Accesibilidad Rápida -->
+<button id="cartTriggerFloating" class="fixed bottom-6 right-6 z-40 bg-secondary text-on-secondary p-4 rounded-full shadow-lg hover:scale-105 active:scale-95 transition-transform flex items-center justify-center" title="Ver carrito de compras">
+  <span class="material-symbols-outlined text-3xl">shopping_cart</span>
+  <span class="cart-badge absolute -top-1 -right-1 bg-primary text-on-primary text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center hidden">0</span>
+</button>
+
+<!-- Hero Section -->
+<section class="relative h-screen flex items-center justify-center overflow-hidden" id="inicio">
+  <div class="absolute inset-0 bg-primary/40 z-10"></div>
+  <img class="absolute inset-0 w-full h-full object-cover" 
+       data-alt="Una fotografía detallada de estilo rústico de panes saborizados y caseros de campo con corteza crujiente, dispuestos sobre una mesa de madera oscura en una panadería de alta gama. La luz direccional y cálida crea sombras profundas y resalta la textura táctil de la corteza. Estética elegante, artesanal y sofisticada." 
+       src="https://lh3.googleusercontent.com/aida-public/AB6AXuAX8IUy4BG8KomdUkWV91KrfKR5U45l2i2Z4SQhiJwX3i2selmCK6y7ngavEBwj9k1Si4RPiGFsoFuVVb1HTJnWR7YHPmdpwZKSh-aKKhMrg3lLY1zAlRXB2PU5sO7IbN0jEJ_wdYXpoXRZQE0zwcIxu2tFaosxfqlYkAI7fsGGeHK0eeB4CrounsVgP9XYrHYk7efbofLJY_o322qbq66z52W9rj-oG7uqaRzDpvut9khtekCryRYrkRexnCuUN9ZI0AWyA3QISSw">
+  <div class="relative z-20 text-center text-white px-margin-mobile max-w-4xl mx-auto">
+    <h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg mb-4 tracking-tight">Sandrita</h1>
+    <p class="font-headline-sm text-headline-sm italic mb-10 opacity-90">Panadería y Confitería Artesanal · San Luis</p>
+    <div class="flex flex-col sm:flex-row gap-6 justify-center">
+      <a class="bg-surface text-primary px-10 py-4 rounded-none font-label-md text-label-md hover:bg-secondary-fixed transition-colors" href="#productos">Ver productos</a>
+      <a class="border border-white text-white px-10 py-4 rounded-none font-label-md text-label-md hover:bg-white/10 transition-colors" href="#pedidos">Hacer un pedido</a>
+    </div>
+  </div>
+  <div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 animate-bounce">
+    <span class="material-symbols-outlined text-white text-4xl">keyboard_double_arrow_down</span>
+  </div>
+</section>
+
+<!-- Nosotros Section -->
+<section class="bg-surface-container-low dark:bg-primary-container/5 py-section-gap reveal active" id="nosotros">
+  <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop grid md:grid-cols-2 gap-16 items-center">
+    <div class="relative group">
+      <div class="absolute -inset-4 border border-secondary/20 translate-x-4 translate-y-4 -z-10 transition-transform group-hover:translate-x-2 group-hover:translate-y-2"></div>
+      <img class="w-full aspect-[4/5] object-cover grayscale-[20%] hover:grayscale-0 transition-all duration-700" 
+           data-alt="Una escena cálida de las manos de un panadero profesional amasando masa fresca sobre una mesada de mármol espolvoreada con harina. Iluminación suave y dorada, destacando las partículas de harina en el aire. De fondo, herramientas de cobre antiguas y cestas de mimbre en estantes de madera rústica." 
+           src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDsnbnikHfNgqgTCaPgRMLcYxn0IYBN7xH3r-clExLj2aI9lSNp17CesFfaFymqDR_DfQzyeXyypeHjjc2Z1gOE5J2K-iK4gCpBA87eQSckwLBO7_7Ehcby5GKeqS0NI5bZJUZWanVl5tfuiVkPAikCCT2gZm8LDrYd74emTbkilHLPOJEho-UO2jGH10wVRDj5MbfIbMrDvFowGlZD6_kR7yLrMkmggGAJO7ykMognd9vJQjOXPvD3Q2ylAm3dTgFyW2rqHimGBE">
+    </div>
+    <div>
+      <span class="text-secondary dark:text-secondary-fixed-dim font-label-sm text-label-sm uppercase tracking-widest mb-4 block">Nuestra Historia</span>
+      <h2 class="font-headline-md text-headline-md text-primary dark:text-primary-fixed mb-8">Tradición que se siente en cada bocado</h2>
+      <div class="space-y-6 text-on-surface-variant dark:text-tertiary-fixed-dim/90 leading-relaxed">
+        <p class="font-body-lg text-body-lg italic font-light">"En Sandrita, cada hogaza cuenta una historia de paciencia y respeto por la materia prima."</p>
+        <p>Nacidos en el corazón de San Luis, mantenemos viva la esencia de la panadería tradicional europea fusionada con el espíritu puntano. Utilizamos fermentaciones lentas y harinas seleccionadas para garantizar no solo el sabor, sino la calidad nutricional de nuestros productos.</p>
+        
+        <div class="pt-8 border-t border-outline/10 dark:border-white/10">
+          <div class="flex items-start gap-4 mb-4">
+            <span class="material-symbols-outlined text-secondary dark:text-secondary-fixed">schedule</span>
+            <div>
+              <p class="font-label-md text-label-md text-primary dark:text-primary-fixed">Horarios de Atención</p>
+              <p class="text-on-surface-variant dark:text-tertiary-fixed-dim/75">Lunes a Sábado 8:00 – 15:00 hs</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <span class="material-symbols-outlined text-secondary dark:text-secondary-fixed">location_on</span>
+            <div>
+              <p class="font-label-md text-label-md text-primary dark:text-primary-fixed">Dirección</p>
+              <p class="text-on-surface-variant dark:text-tertiary-fixed-dim/75">Rivadavia 907, San Luis, Argentina</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Productos Section -->
+<section class="py-section-gap reveal active" id="productos">
+  <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+    <div class="text-center mb-16">
+      <h2 class="font-display-lg-mobile md:font-headline-md text-display-lg-mobile md:text-headline-md text-primary dark:text-primary-fixed mb-4">Nuestras Creaciones</h2>
+      <p class="text-on-surface-variant dark:text-tertiary-fixed-dim/80 max-w-2xl mx-auto">Explorá nuestra selección artesanal, desde exquisitos panes saborizados y caseros de campo hasta pastelería fina elaborada diariamente.</p>
+    </div>
+    
+    <!-- Editorial Category Overview Cards (Presentación Inicial) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter mb-20">
+      <!-- Pan Artesanal -->
+      <div class="group cursor-pointer">
+        <div class="overflow-hidden mb-6 aspect-[3/4]">
+          <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+               data-alt="Exposición de panes saborizados de queso o salame, miñones y panes caseros redondos tradicionales dispuestos de manera rústica sobre papel madera." 
+               src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqIRNiWkLeBlH0Lmxbw-IZHcswmWmJj5YXJuyeukRzCgdAbNZ4BSGbFsazvGRQ5gd37zwBp9fIo2QJHr7hAXFRoqq1MoiaeI72bxiibF9od3SqJEuos4eFnYcxndgLAzdln_uNxztwuaZIG1RLWOmStGgg-WultdECXbM58WzroLIptoJcVH9xIl2Nar-XjyFlOTXRzHgZgDcVhwYCkWX7gBcTolLp2caX7MyE3OiccWLIed3ZYoGzivsxsi31sL2zNvp9n4vV93M">
+        </div>
+        <h3 class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed mb-2">Pan artesanal</h3>
+        <p class="text-label-sm text-on-surface-variant dark:text-tertiary-fixed-dim/80">Variedades de panes saborizados y caseros tradicionales, miñones crocantes y especialidades de campo.</p>
+      </div>
+      <!-- Facturas -->
+      <div class="group cursor-pointer">
+        <div class="overflow-hidden mb-6 aspect-[3/4]">
+          <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+               data-alt="Primer plano de medialunas y facturas argentinas tradicionales en una fuente de cerámica blanca. Estética de cafetería europea fina con un glaseado brillante y lluvia de azúcar impalpable." 
+               src="https://lh3.googleusercontent.com/aida-public/AB6AXuCU28ZD9ewpwew5KtyRjTEoWbHuSqvhGZK2qlY5h3tiBiqOfB9lTG1Yveix_UB5JzKydslv8nRzePAETR6QCDcyP5vRm65Ji6cEaxFV_H3FFxFlABVjaOd2P8g2yRyrdWW-mksXsyNd2VTLajmP4AnYiB5hEP9blBV53xNdPeSdJMzYYKBiXoU3eCk-oq4jefN7mbn45rrGhDsZz1Ip5OAw8uAFPA6F9kIof7Atot2vG1fqZ9kyRqeX1kX2P4d88Deb-4GZ8McjLUw">
+        </div>
+        <h3 class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed mb-2">Facturas</h3>
+        <p class="text-label-sm text-on-surface-variant dark:text-tertiary-fixed-dim/80">Deliciosas variedades hojaldradas elaboradas con manteca de primera calidad y medialunas comunes bañadas en almíbar.</p>
+      </div>
+      <!-- Tortas y Pasteles -->
+      <div class="group cursor-pointer">
+        <div class="overflow-hidden mb-6 aspect-[3/4]">
+          <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+               data-alt="Torta especial decorada con crema suave, flores comestibles y frutas de estación frescas, presentada en un elegante soporte de vidrio." 
+               src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTyflqBmhhc_0svnaKczpb2NlWVDho4r5QXDVKmc2ZzyBaBw8rsXD9SGvxwPvz7MAczsAb8lEaUsk7434Xb2AtTnti1FTWkMI6JGTkerH2rts6cDlxmWRQvmBK_FWIQyDvYOWFFDzlPfgB6jxQkw0Wds5H1uEzRso2AuuOKHv49IZFIEDPD-K9xc4e24rJHTMDjLE6bDl_6ginkZECwALnWAllKAnCjvYE8mlI-X5q1CDHGmEHEfRre6mKNWLKVJKVG9SeU2R2wv8">
+        </div>
+        <h3 class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed mb-2">Tortas y pasteles</h3>
+        <p class="text-label-sm text-on-surface-variant dark:text-tertiary-fixed-dim/80">Creaciones dulces clásicas y especiales personalizadas de alta gama para celebrar momentos inolvidables.</p>
+      </div>
+      <!-- Confitería -->
+      <div class="group cursor-pointer">
+        <div class="overflow-hidden mb-6 aspect-[3/4]">
+          <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+               data-alt="Surtido de masas finas y tartas frutales de estación dispuestas en una bandeja elegante sobre una mesa. Iluminación profesional que destaca la frescura de cada bocado dulce." 
+               src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZoY2YFXM5SUYF68IysKWGbvMwJqGbtr1r1Iom2YaBDCgHbN4kjzF2VA47yMocc_A8CCKyDwaqOntl_lGpMSVdCjfybgG8VZjEUk8mSHmNJM8oA9ff4m2IfJeeKrJ74M6U4TiE4NSmb3MVjK89V91M-1r6LpLBoqBKm02k8pXkNr8Z_wQdPiCYWzNBXRWh8qp407fLGYLeT9LxGFUY_npyGoxPktKhyYDuO9JDtFZiaxsIE3x3vPeaQDwZhhZQemPDha-Wvf1_gao">
+        </div>
+        <h3 class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed mb-2">Confitería</h3>
+        <p class="text-label-sm text-on-surface-variant dark:text-tertiary-fixed-dim/80">Masas finas tradicionales y tartas frutales brillantes, el regalo dulce perfecto elaborado diariamente.</p>
+      </div>
+    </div>
+    
+    <!-- 🛒 SECCIÓN: Catálogo Interactivo con Filtros -->
+    <div class="mt-20 pt-16 border-t border-outline/10 dark:border-white/10">
+      <div class="text-center mb-10">
+        <span class="text-secondary dark:text-secondary-fixed font-label-sm text-label-sm uppercase tracking-widest block mb-3">Vidriera Digital</span>
+        <h3 class="font-headline-md text-headline-md text-primary dark:text-primary-fixed mb-4">Armá tu pedido personalizado</h3>
+        <p class="text-on-surface-variant dark:text-tertiary-fixed-dim/80 max-w-xl mx-auto">Seleccioná los productos artesanales que más te gusten, definí las cantidades y sumalas a tu carrito de compras.</p>
+      </div>
+      
+      <!-- Pestañas de Filtro (Category Tabs) -->
+      <div class="flex flex-wrap justify-center gap-2 md:gap-4 border-b border-outline/15 dark:border-white/10 pb-4 max-w-2xl mx-auto mb-12">
+        <button class="category-tab active" data-category="todos">Ver Todos</button>
+        <button class="category-tab" data-category="pan">Panes</button>
+        <button class="category-tab" data-category="facturas">Facturas</button>
+        <button class="category-tab" data-category="tortas">Tortas y Pasteles</button>
+        <button class="category-tab" data-category="confiteria">Confitería</button>
+      </div>
+      
+      <!-- Grilla Dinámica de Productos -->
+      <div id="catalogContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+        <!-- Renderizado dinámicamente desde src/app.js -->
+      </div>
+    </div>
+
+    <!-- "Baker's Note" signature component -->
+    <div class="mt-24 p-12 border border-secondary/20 bg-surface-container dark:bg-primary-container/10 text-center max-w-3xl mx-auto rounded-xl">
+      <span class="material-symbols-outlined text-secondary dark:text-secondary-fixed text-4xl mb-4" style="font-variation-settings: 'FILL' 1;">format_quote</span>
+      <p class="font-headline-sm text-headline-sm italic text-primary dark:text-primary-fixed">"Nuestra misión es llevar a tu mesa un producto que respete los tiempos de la naturaleza y el legado de nuestros abuelos."</p>
+      <p class="mt-6 font-label-md text-label-md text-secondary dark:text-secondary-fixed">— El Equipo de Sandrita</p>
+    </div>
+  </div>
+</section>
+
+<!-- Pedidos Section -->
+<section class="bg-surface-container-low dark:bg-primary-container/5 py-section-gap reveal active" id="pedidos">
+  <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+    <div class="bg-white dark:bg-inverse-surface p-8 md:p-16 grid md:grid-cols-2 gap-16 shadow-md border border-outline/5 rounded-2xl">
+      <div>
+        <h2 class="font-headline-md text-headline-md text-primary dark:text-primary-fixed mb-6">Realizá tu Pedido</h2>
+        <p class="text-on-surface-variant dark:text-tertiary-fixed-dim/95 mb-8 leading-relaxed">Anticipá tus celebraciones o simplemente asegurá tu pan diario de manera sencilla. Completá el formulario con tus datos y envialo directamente a nuestro WhatsApp para una atención ágil y personalizada.</p>
+        
+        <div class="space-y-4">
+          <div class="flex items-center gap-3 text-secondary dark:text-secondary-fixed">
+            <span class="material-symbols-outlined">info</span>
+            <span class="font-label-md text-label-md">Pedidos con 24 hs de anticipación</span>
+          </div>
+          <div class="flex items-center gap-3 text-on-surface-variant dark:text-tertiary-fixed-dim/80">
+            <span class="material-symbols-outlined">confirmation_number</span>
+            <span class="text-sm">Te responderemos a la brevedad para confirmar stock y retiro.</span>
+          </div>
+        </div>
+      </div>
+      
+      <form id="orderForm" class="space-y-6">
+        <div>
+          <input class="w-full bg-transparent border-0 border-b border-outline/30 dark:border-white/20 py-3 focus:border-secondary focus:ring-0 placeholder:text-outline-variant font-body-md text-primary dark:text-white transition-colors" 
+                 placeholder="Nombre completo" type="text" required>
+        </div>
+        <div>
+          <input class="w-full bg-transparent border-0 border-b border-outline/30 dark:border-white/20 py-3 focus:border-secondary focus:ring-0 placeholder:text-outline-variant font-body-md text-primary dark:text-white transition-colors" 
+                 placeholder="Teléfono de contacto" type="tel" required>
+        </div>
+        <div>
+          <label class="text-label-sm text-outline dark:text-tertiary-fixed-dim/60 mb-1 block">¿Qué deseas encargar?</label>
+          <select class="w-full bg-transparent border-0 border-b border-outline/30 dark:border-white/20 py-3 focus:border-secondary focus:ring-0 text-on-surface-variant dark:text-tertiary-fixed-dim font-body-md transition-colors">
+            <option value="carrito">Todo mi Carrito de Compras</option>
+            <!-- Opciones individuales cargadas desde JS -->
+          </select>
+        </div>
+        <div class="flex flex-col md:flex-row gap-6">
+          <div class="flex-1">
+            <label class="text-label-sm text-outline dark:text-tertiary-fixed-dim/60 mb-1 block">Fecha esperada de retiro</label>
+            <input class="w-full bg-transparent border-0 border-b border-outline/30 dark:border-white/20 py-3 focus:border-secondary focus:ring-0 text-on-surface-variant dark:text-white font-body-md transition-colors" type="date">
+          </div>
+        </div>
+        <div>
+          <label class="text-label-sm text-outline dark:text-tertiary-fixed-dim/60 mb-1 block">Comentarios o indicaciones del pedido</label>
+          <textarea id="orderComments" maxlength="1000" rows="3" class="w-full bg-transparent border border-outline/30 dark:border-white/20 rounded-xl p-3 focus:border-secondary focus:ring-0 placeholder:text-outline-variant font-body-md text-primary dark:text-white transition-colors" placeholder="Escribí acá detalles de tu pedido (ej. sabor de pan, rellenos de torta, diseño personalizado, etc.)"></textarea>
+          <div class="text-right text-xs text-outline dark:text-tertiary-fixed-dim/60 mt-1">
+            <span id="charCount">0</span>/1000 caracteres
+          </div>
+        </div>
+        <button class="w-full bg-primary text-on-primary dark:bg-primary-fixed dark:text-on-primary-fixed py-4 mt-4 hover:opacity-90 transition-opacity font-label-md text-label-md tracking-widest uppercase rounded-full flex items-center justify-center gap-2" type="submit">
+          <span class="material-symbols-outlined text-sm">chat</span>
+          Enviar Pedido vía WhatsApp
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- Contacto Section -->
+<section class="py-section-gap reveal active" id="contacto">
+  <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+    <div class="grid md:grid-cols-12 gap-gutter items-center">
+      <div class="md:col-span-5 space-y-10">
+        <div>
+          <h2 class="font-headline-md text-headline-md text-primary dark:text-primary-fixed mb-4">¿Dónde encontrarnos?</h2>
+          <p class="text-on-surface-variant dark:text-tertiary-fixed-dim/95">Visitanos en nuestro local histórico en la ciudad de San Luis para disfrutar de la calidez de nuestro servicio y el aroma a pan recién horneado.</p>
+        </div>
+        
+        <div class="space-y-6">
+          <a class="flex items-center gap-4 group" href="https://wa.me/5492664000000" target="_blank">
+            <div class="w-12 h-12 rounded-full bg-secondary/10 dark:bg-secondary-fixed-dim/10 flex items-center justify-center text-secondary dark:text-secondary-fixed group-hover:bg-secondary group-hover:text-white dark:group-hover:bg-secondary-fixed-dim dark:group-hover:text-primary transition-all duration-300">
+              <span class="material-symbols-outlined">chat</span>
+            </div>
+            <div>
+              <p class="font-label-md text-label-md text-primary dark:text-primary-fixed">WhatsApp</p>
+              <p class="text-on-surface-variant dark:text-tertiary-fixed-dim/75">Mandanos un mensaje directo</p>
+            </div>
+          </a>
+          <a class="flex items-center gap-4 group" href="https://instagram.com/panaderia_sandrita" target="_blank">
+            <div class="w-12 h-12 rounded-full bg-secondary/10 dark:bg-secondary-fixed-dim/10 flex items-center justify-center text-secondary dark:text-secondary-fixed group-hover:bg-secondary group-hover:text-white dark:group-hover:bg-secondary-fixed-dim dark:group-hover:text-primary transition-all duration-300">
+              <span class="material-symbols-outlined">camera</span>
+            </div>
+            <div>
+              <p class="font-label-md text-label-md text-primary dark:text-primary-fixed">Instagram</p>
+              <p class="text-on-surface-variant dark:text-tertiary-fixed-dim/75">Seguinos en @panaderia_sandrita</p>
+            </div>
+          </a>
+        </div>
+      </div>
+      
+      <div class="md:col-span-7 aspect-video bg-surface-container dark:bg-primary-container/10 relative rounded-2xl overflow-hidden border border-outline/10 dark:border-white/10">
+        <div class="absolute inset-0 flex items-center justify-center bg-outline/5 z-10 pointer-events-none">
+          <div class="text-center p-8 bg-surface/85 dark:bg-inverse-surface/85 backdrop-blur-sm rounded-xl border border-outline/10">
+            <span class="material-symbols-outlined text-secondary dark:text-secondary-fixed text-5xl mb-4 block">map</span>
+            <p class="font-label-md text-label-md text-primary dark:text-primary-fixed">Mapa de Ubicación</p>
+            <p class="text-sm text-on-surface-variant dark:text-tertiary-fixed-dim/80 mt-1">Rivadavia 907, San Luis, Argentina</p>
+          </div>
+        </div>
+        <!-- Mock Map Background -->
+        <img class="w-full h-full object-cover opacity-45 dark:opacity-20 grayscale pointer-events-none" 
+             alt="Mapa ilustrativo de la ciudad de San Luis indicando la ubicación del local histórico de la panadería Sandrita." 
+             src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6gElfmyJbF7wVg8kdGbiDXO9q3hWLcsRcHt631aUoInzHa4xMhdQPPFazaLtIKCLCz7wmvjVXvEznMFHdvQ-Nlu9u1xKpgdGQJFwCATWlS4yNBpjtSU1yapvI4PBNny6gnZlhB4PqnUZHhvZuEbCnGzg_5OPzmgYrA_RZNdPx5nVZ3E9bv2m6si9yIVMYZZ_Xg1JsCPET4Ew_5AumlqOUH2kRenEXGaKB1i0YJ7oSfF5cX3Upu-HJBiHDNwFKA1ISWA26JCKxu4I">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-primary dark:bg-on-primary-fixed text-on-primary border-t border-white/5 py-section-gap transition-colors duration-300">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+    <div class="space-y-6">
+      <span class="font-headline-sm text-headline-sm text-surface-container-lowest block">Sandrita</span>
+      <p class="text-tertiary-fixed-dim/80 font-body-md text-body-md max-w-xs leading-relaxed">
+        Artesanos del sabor desde hace décadas, comprometidos con la excelencia y la tradición gastronómica puntana.
+      </p>
+    </div>
+    
+    <div class="space-y-4">
+      <h4 class="font-label-md text-label-md text-secondary-fixed mb-6 uppercase tracking-widest">Explorar</h4>
+      <ul class="space-y-3">
+        <li><a class="text-tertiary-fixed-dim/80 font-label-sm text-label-sm hover:text-secondary-fixed transition-all duration-200" href="#nosotros">Nosotros</a></li>
+        <li><a class="text-tertiary-fixed-dim/80 font-label-sm text-label-sm hover:text-secondary-fixed transition-all duration-200" href="#productos">Productos</a></li>
+        <li><a class="text-tertiary-fixed-dim/80 font-label-sm text-label-sm hover:text-secondary-fixed transition-all duration-200" href="#pedidos">Pedidos</a></li>
+        <li><a class="text-tertiary-fixed-dim/80 font-label-sm text-label-sm hover:text-secondary-fixed transition-all duration-200" href="#contacto">Ubicación</a></li>
+      </ul>
+    </div>
+    
+    <div class="space-y-4">
+      <h4 class="font-label-md text-label-md text-secondary-fixed mb-6 uppercase tracking-widest">Contacto</h4>
+      <p class="text-tertiary-fixed-dim/80 font-label-sm text-label-sm">Rivadavia 907, San Luis, Argentina</p>
+      <p class="text-tertiary-fixed-dim/80 font-label-sm text-label-sm">hola@sandrita.com.ar</p>
+      <div class="pt-6 flex gap-4">
+        <a class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-primary transition-colors" href="#" aria-label="Facebook">
+          <span class="material-symbols-outlined text-sm">social_leaderboard</span>
+        </a>
+        <a class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-primary transition-colors" href="#" aria-label="Contacto por Mail">
+          <span class="material-symbols-outlined text-sm">alternate_email</span>
+        </a>
+      </div>
+    </div>
+  </div>
+  
+  <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop mt-16 pt-8 border-t border-white/10 text-center">
+    <p class="text-tertiary-fixed-dim/60 font-label-sm text-label-sm">© 2026 Panadería Sandrita. San Luis, Argentina. Todos los derechos reservados.</p>
+  </div>
+</footer>
+
+<script type="module" src="./src/app.js"></script>
+</body>
+</html>

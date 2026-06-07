@@ -1,0 +1,123 @@
+/* src/styles.css */
+
+/* Transiciones globales suaves para Modo Oscuro */
+*, *::before, *::after {
+  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+              border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+              color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s ease;
+}
+
+/* Evitar que las imágenes o animaciones de rebote hereden transiciones globales molestas */
+img, .animate-bounce, .material-symbols-outlined {
+  transition: transform 0.3s ease, filter 0.3s ease, opacity 0.3s ease;
+}
+
+/* Efecto de vidrio (Glassmorphism) para el Carrito y Controles */
+.glass-panel {
+  background: rgba(250, 249, 246, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(128, 117, 108, 0.15);
+}
+
+.dark .glass-panel {
+  background: rgba(47, 49, 47, 0.9);
+  border: 1px solid rgba(225, 193, 164, 0.15);
+}
+
+/* Estilo del Cajón del Carrito (Cart Drawer) */
+#cartDrawer {
+  z-index: 100;
+}
+
+#cartDrawerContent {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Línea punteada decorativa en resúmenes de precios */
+.price-leader {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.price-leader::after {
+  content: '';
+  flex-grow: 1;
+  border-bottom: 1px dotted rgba(128, 117, 108, 0.4);
+  margin: 0 8px;
+  order: 2;
+}
+
+.price-leader .item-name {
+  order: 1;
+}
+
+.price-leader .item-price {
+  order: 3;
+  font-weight: 600;
+}
+
+/* Pestañas de categoría (Tabs) activas/inactivas */
+.category-tab {
+  position: relative;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.category-tab::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: var(--tw-color-secondary);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.category-tab.active {
+  color: #775a19; /* secondary */
+  font-weight: 700;
+}
+
+.dark .category-tab.active {
+  color: #ffdea5; /* secondary-fixed */
+}
+
+.category-tab.active::after {
+  width: 80%;
+}
+
+/* Scrollbar personalizado y elegante */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #faf9f6;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #1a1c1a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d2c4ba;
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #4e453d;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #80756c;
+}
