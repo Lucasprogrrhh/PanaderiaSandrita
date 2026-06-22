@@ -387,6 +387,21 @@
                  placeholder="Teléfono de contacto" type="tel" required>
         </div>
         <div>
+          <input id="orderEmail" class="w-full bg-transparent border-0 border-b border-outline/30 dark:border-white/20 py-3 focus:border-secondary focus:ring-0 placeholder:text-outline-variant font-body-md text-primary dark:text-white transition-colors" 
+                 placeholder="Email (para recibir confirmación)" type="email" required>
+        </div>
+        <div>
+          <label class="text-label-sm text-outline dark:text-tertiary-fixed-dim/60 mb-1 block">Modalidad de entrega</label>
+          <select id="orderTipoEntrega" class="w-full bg-transparent border-0 border-b border-outline/30 dark:border-white/20 py-3 focus:border-secondary focus:ring-0 text-on-surface-variant dark:text-tertiary-fixed-dim font-body-md transition-colors">
+            <option value="retiro">🏪 Retiro en el local (Rivadavia 907)</option>
+            <option value="envio">🏠 Envío a domicilio</option>
+          </select>
+        </div>
+        <div id="orderDireccionWrapper" class="hidden">
+          <input id="orderDireccion" class="w-full bg-transparent border-0 border-b border-outline/30 dark:border-white/20 py-3 focus:border-secondary focus:ring-0 placeholder:text-outline-variant font-body-md text-primary dark:text-white transition-colors" 
+                 placeholder="Dirección de envío" type="text">
+        </div>
+        <div>
           <label class="text-label-sm text-outline dark:text-tertiary-fixed-dim/60 mb-1 block">¿Qué deseas encargar?</label>
           <select class="w-full bg-transparent border-0 border-b border-outline/30 dark:border-white/20 py-3 focus:border-secondary focus:ring-0 text-on-surface-variant dark:text-tertiary-fixed-dim font-body-md transition-colors">
             <option value="carrito">Todo mi Carrito de Compras</option>
@@ -406,9 +421,9 @@
             <span id="charCount">0</span>/1000 caracteres
           </div>
         </div>
-        <button class="w-full bg-primary text-on-primary dark:bg-primary-fixed dark:text-on-primary-fixed py-4 mt-4 hover:opacity-90 transition-opacity font-label-md text-label-md tracking-widest uppercase rounded-full flex items-center justify-center gap-2" type="submit">
+        <button id="orderSubmitBtn" class="w-full bg-primary text-on-primary dark:bg-primary-fixed dark:text-on-primary-fixed py-4 mt-4 hover:opacity-90 transition-opacity font-label-md text-label-md tracking-widest uppercase rounded-full flex items-center justify-center gap-2 disabled:opacity-50" type="submit">
           <span class="material-symbols-outlined text-sm">chat</span>
-          Enviar Pedido vía WhatsApp
+          <span id="orderSubmitText">Enviar Pedido</span>
         </button>
       </form>
     </div>

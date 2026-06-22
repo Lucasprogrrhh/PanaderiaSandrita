@@ -484,19 +484,32 @@ function initCartDrawer() {
   }
 }
 
-// 6. Formulario inteligente con Checkout a WhatsApp
+// 6. Formulario inteligente con Checkout al Backend
 function initOrderCheckout() {
   const orderForm = document.getElementById('orderForm');
   if (!orderForm) return;
 
-  // Llenar selector de productos dinámicamente si corresponde
-  const selectProduct = orderForm.querySelector('select');
+  // Llenar selector de productos dinámicamente
+  const selectProduct = orderForm.querySelector('select:not(#orderTipoEntrega)');
   if (selectProduct) {
     let selectHtml = '<option value="carrito">Todo mi Carrito de Compras</option>';
     PRODUCTS.forEach(p => {
       selectHtml += `<option value="${p.id}">${p.name} - ${formatCurrency(p.price)}</option>`;
     });
     selectProduct.innerHTML = selectHtml;
+  }
+
+  // Mostrar/ocultar campo de dirección según modalidad de entrega
+  const tipoEntregaSelect = document.getElementById('orderTipoEntrega');
+  const direccionWrapper = document.getElementById('orderDireccionWrapper');
+  if (tipoEntregaSelect && direccionWrapper) {
+    tipoEntregaSelect.addEventListener('change', () => {
+      if (tipoEntregaSelect.value === 'envio') {
+        direccionWrapper.classList.remove('hidden');
+      } else {
+        direccionWrapper.classList.add('hidden');
+      }
+    });
   }
 
   // Contador de caracteres para comentarios
@@ -508,78 +521,97 @@ function initOrderCheckout() {
     });
   }
 
-  orderForm.addEventListener('submit', (e) => {
+  orderForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const name = orderForm.querySelector('input[type="text"]').value.trim();
-    const phone = orderForm.querySelector('input[type="tel"]').value.trim();
-    const interest = orderForm.querySelector('select').value;
-    const date = orderForm.querySelector('input[type="date"]').value;
-    const comments = commentsTextarea ? commentsTextarea.value.trim() : '';
+    const submitBtn = document.getElementById('orderSubmitBtn');
+    const submitText = document.getElementById('orderSubmitText');
 
-    if (!name || !phone) {
+    // Leer todos los campos del formulario
+    const nombre   = orderForm.querySelector('input[type="text"]').value.trim();
+    const telefono = orderForm.querySelector('input[type="tel"]').value.trim();
+    const email    = document.getElementById('orderEmail')?.value.trim() || '';
+    const interest = selectProduct ? selectProduct.value : 'carrito';
+    const fecha_retiro     = orderForm.querySelector('input[type="date"]').value;
+    const tipo_entrega     = tipoEntregaSelect ? tipoEntregaSelect.value : 'retiro';
+    const direccion_envio  = document.getElementById('orderDireccion')?.value.trim() || '';
+    const mensaje          = commentsTextarea ? commentsTextarea.value.trim() : '';
+
+    // Validaciones básicas en el cliente
+    if (!nombre || !telefono) {
       alert('Por favor, ingresá tu nombre completo y tu teléfono de contacto.');
       return;
     }
-
+    if (!email) {
+      alert('Por favor, ingresá tu email para recibir la confirmación del pedido.');
+      return;
+    }
     if (interest === 'carrito' && cart.length === 0) {
-      alert('Tu carrito de compras está vacío. Agregá algunos panes saborizados o pastelería antes de enviar.');
+      alert('Tu carrito de compras está vacío. Agregá algunos productos antes de enviar.');
       return;
     }
 
-    // Número de teléfono de la panadería Sandrita (San Luis, Argentina)
-    // Usamos uno por defecto representativo, editable.
-    const bakeryPhone = '5492664000000'; 
-    let message = `🍞 *Nuevo Pedido - Panadería Sandrita* 🍞\n`;
-    message += `-----------------------------------------\n`;
-    message += `👤 *Cliente:* ${name}\n`;
-    message += `📞 *Contacto:* ${phone}\n`;
-    if (date) {
-      const formattedDate = date.split('-').reverse().join('/');
-      message += `📅 *Fecha de Retiro:* ${formattedDate}\n`;
-    }
-    message += `-----------------------------------------\n\n`;
-
+    // Armar el texto del producto (carrito completo o producto individual)
+    let productoTexto = '';
     if (interest === 'carrito') {
-      message += `🛒 *Detalle del Pedido (Carrito):*\n`;
-      let total = 0;
-      cart.forEach((item, idx) => {
-        const itemTotal = item.price * item.quantity;
-        total += itemTotal;
-        message += `${idx + 1}. *${item.name}* (x${item.quantity}) → _${formatCurrency(itemTotal)}_\n`;
-      });
-      message += `\n💵 *Total Estimado:* ${formatCurrency(total)}\n`;
+      productoTexto = cart.map(item => `${item.name} x${item.quantity}`).join(', ');
     } else {
-      const singleProduct = PRODUCTS.find(p => p.id === interest);
-      if (singleProduct) {
-        message += `🎯 *Producto de Interés:*\n`;
-        message += `- *${singleProduct.name}* → _${formatCurrency(singleProduct.price)}_\n`;
+      const prod = PRODUCTS.find(p => p.id === interest);
+      productoTexto = prod ? prod.name : interest;
+    }
+
+    // Estado de carga en el botón
+    if (submitBtn) submitBtn.disabled = true;
+    if (submitText) submitText.textContent = 'Enviando...';
+
+    try {
+      // ── Llamar al backend serverless ──────────────────────────────────
+      const response = await fetch('/api/pedidos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nombre,
+          telefono,
+          email,
+          producto: productoTexto,
+          fecha_retiro: fecha_retiro || new Date().toISOString().split('T')[0],
+          tipo_entrega,
+          direccion_envio: tipo_entrega === 'envio' ? direccion_envio : null,
+          mensaje,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // ── Pedido guardado correctamente ─────────────────────────────
+        showNotification('✅ ¡Pedido enviado! Revisá tu email para la confirmación.');
+
+        // Limpiar carrito y formulario
+        if (interest === 'carrito') clearCart();
+        orderForm.reset();
+        if (commentsTextarea) commentsTextarea.value = '';
+        if (charCountSpan) charCountSpan.textContent = '0';
+        if (direccionWrapper) direccionWrapper.classList.add('hidden');
+
+        // Abrir WhatsApp del local con el resumen del pedido
+        if (data.whatsappUrl) {
+          setTimeout(() => window.open(data.whatsappUrl, '_blank'), 800);
+        }
+      } else {
+        // Error controlado devuelto por el backend
+        alert(`Error al enviar el pedido: ${data.error || 'Intentá de nuevo.'}`);
       }
-    }
 
-    if (comments) {
-      message += `\n📝 *Comentarios/Indicaciones:*\n${comments}\n`;
+    } catch (err) {
+      // Error de red u otro fallo inesperado
+      console.error('[Formulario] Error al conectar con el backend:', err);
+      alert('No se pudo conectar con el servidor. Verificá tu conexión e intentá de nuevo.');
+    } finally {
+      // Restaurar botón siempre
+      if (submitBtn) submitBtn.disabled = false;
+      if (submitText) submitText.textContent = 'Enviar Pedido';
     }
-
-    message += `\n-----------------------------------------\n`;
-    message += `📝 _Pedido enviado automáticamente desde la web._`;
-
-    // Codificar mensaje para URL
-    const url = `https://wa.me/${bakeryPhone}?text=${encodeURIComponent(message)}`;
-    
-    // Limpiar carrito tras realizar pedido
-    if (interest === 'carrito') {
-      clearCart();
-    }
-
-    // Limpiar comentarios
-    if (commentsTextarea) {
-      commentsTextarea.value = '';
-      if (charCountSpan) charCountSpan.textContent = '0';
-    }
-    
-    // Abrir WhatsApp en pestaña nueva
-    window.open(url, '_blank');
   });
 }
 
