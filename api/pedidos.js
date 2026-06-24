@@ -102,7 +102,7 @@ export default async function handler(req, res) {
       console.error('[Pedidos] Error al guardar en Supabase:', errorSupabase);
       return res.status(500).json({
         success: false,
-        error: 'Error interno del servidor al guardar el pedido.',
+        error: `Error interno del servidor al guardar el pedido: ${errorSupabase.message || JSON.stringify(errorSupabase)}`,
       });
     }
 
