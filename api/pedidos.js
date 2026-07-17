@@ -31,8 +31,12 @@ import { enviarEmailConfirmacion } from '../lib/email.js';
  */
 export default async function handler(req, res) {
 
+  // Asegurar codificación UTF-8 en las respuestas
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+
   // ─── 1. Manejo de preflight CORS (OPTIONS) ────────────────────────────────
   if (req.method === 'OPTIONS') {
+    res.setHeader('Content-Type', 'text/plain');
     return res.status(200).end();
   }
 
@@ -55,6 +59,7 @@ export default async function handler(req, res) {
       tipo_entrega = 'retiro',
       direccion_envio,
       mensaje,
+      user_id,
     } = req.body;
 
     const datosPedido = {
@@ -66,6 +71,7 @@ export default async function handler(req, res) {
       tipo_entrega,
       direccion_envio: direccion_envio?.trim() || null,
       mensaje:         mensaje?.trim() || null,
+      user_id:         user_id || null,
     };
 
     // ─── 4. Validar campos requeridos ────────────────────────────────────────
@@ -92,6 +98,7 @@ export default async function handler(req, res) {
           tipo_entrega:    datosPedido.tipo_entrega,
           direccion_envio: datosPedido.direccion_envio,
           mensaje:         datosPedido.mensaje,
+          user_id:         datosPedido.user_id,
           estado:          'pendiente',
         },
       ])

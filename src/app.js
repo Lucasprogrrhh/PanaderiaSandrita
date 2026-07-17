@@ -1,4 +1,5 @@
 // src/app.js
+import { createClient } from '@supabase/supabase-js';
 
 // 1. Catálogo de Productos Premium
 const PRODUCTS = [
@@ -578,6 +579,7 @@ function initOrderCheckout() {
           tipo_entrega,
           direccion_envio: tipo_entrega === 'envio' ? direccion_envio : null,
           mensaje,
+          user_id: currentUser ? currentUser.id : null,
         }),
       });
 
@@ -689,6 +691,355 @@ function initActiveNavigation() {
   });
 }
 
+// 9.5. Sistema de Autenticación de Supabase (Supabase Auth & Profiles)
+let supabaseClient = null;
+let currentUser = null;
+let currentProfile = null;
+
+async function initAuthSystem() {
+  try {
+    const res = await fetch('/api/config');
+    const config = await res.json();
+    if (!config.supabaseUrl || !config.supabaseKey) {
+      console.warn('[Auth] No se encontraron credenciales de Supabase. El panel de usuario no estará disponible.');
+      return;
+    }
+
+    supabaseClient = createClient(config.supabaseUrl, config.supabaseKey);
+
+    // Escuchar cambios en el estado de autenticación
+    supabaseClient.auth.onAuthStateChange(async (event, session) => {
+      console.log(`[Auth] Evento: ${event}`);
+      if (session?.user) {
+        currentUser = session.user;
+        await loadUserProfile(session.user.id);
+      } else {
+        currentUser = null;
+        currentProfile = null;
+        updateUserUI(null);
+      }
+    });
+
+    setupAuthEventListeners();
+  } catch (err) {
+    console.error('[Auth] Error al inicializar Supabase:', err);
+  }
+}
+
+async function loadUserProfile(userId) {
+  try {
+    const { data: profile, error } = await supabaseClient
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
+
+    if (error) {
+      console.error('[Auth] Error al cargar perfil de base de datos:', error);
+      return;
+    }
+
+    currentProfile = profile;
+    updateUserUI(profile);
+  } catch (err) {
+    console.error('[Auth] Error inesperado en perfil:', err);
+  }
+}
+
+function updateUserUI(profile) {
+  const avatarImg = document.getElementById('userAvatarNavbar');
+  const iconSpan = document.getElementById('userIconNavbar');
+  const profileAvatar = document.getElementById('profileAvatar');
+  const defaultIcon = document.getElementById('defaultAvatarIcon');
+
+  // Pre-cargar datos del usuario en el formulario de pedido
+  if (profile) {
+    const orderForm = document.getElementById('orderForm');
+    if (orderForm) {
+      const nombreInput = orderForm.querySelector('input[type="text"]');
+      const telInput = orderForm.querySelector('input[type="tel"]');
+      const emailInput = document.getElementById('orderEmail');
+
+      if (nombreInput && !nombreInput.value) nombreInput.value = `${profile.nombre || ''} ${profile.apellido || ''}`.trim();
+      if (telInput && !telInput.value) telInput.value = profile.telefono || '';
+      if (emailInput && !emailInput.value) emailInput.value = profile.email || '';
+    }
+
+    // Actualizar Avatar en el Navbar
+    if (profile.avatar_url) {
+      if (avatarImg) {
+        avatarImg.src = profile.avatar_url;
+        avatarImg.classList.remove('hidden');
+      }
+      if (iconSpan) iconSpan.classList.add('hidden');
+
+      if (profileAvatar) {
+        profileAvatar.src = profile.avatar_url;
+        profileAvatar.classList.remove('hidden');
+      }
+      if (defaultIcon) defaultIcon.classList.add('hidden');
+    } else {
+      if (avatarImg) avatarImg.classList.add('hidden');
+      if (iconSpan) iconSpan.classList.remove('hidden');
+
+      if (profileAvatar) profileAvatar.classList.add('hidden');
+      if (defaultIcon) defaultIcon.classList.remove('hidden');
+    }
+
+    // Llenar formulario de Perfil en modal
+    document.getElementById('profileNombre').value = profile.nombre || '';
+    document.getElementById('profileApellido').value = profile.apellido || '';
+    document.getElementById('profileTelefono').value = profile.telefono || '';
+    document.getElementById('profileEmail').value = profile.email || '';
+  } else {
+    // Si no está logueado
+    if (avatarImg) avatarImg.classList.add('hidden');
+    if (iconSpan) iconSpan.classList.remove('hidden');
+
+    if (profileAvatar) profileAvatar.classList.add('hidden');
+    if (defaultIcon) defaultIcon.classList.remove('hidden');
+  }
+}
+
+function setupAuthEventListeners() {
+  const authTrigger = document.getElementById('authTrigger');
+  const mobileAuthLink = document.getElementById('mobileAuthLink');
+  const closeAuthModal = document.getElementById('closeAuthModal');
+  const closeProfileModal = document.getElementById('closeProfileModal');
+  const authModal = document.getElementById('authModal');
+  const profileModal = document.getElementById('profileModal');
+  const tabLogin = document.getElementById('tabLogin');
+  const tabRegister = document.getElementById('tabRegister');
+  const loginForm = document.getElementById('loginForm');
+  const registerForm = document.getElementById('registerForm');
+  const profileForm = document.getElementById('profileForm');
+  const changePasswordForm = document.getElementById('changePasswordForm');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const avatarClickContainer = document.getElementById('avatarClickContainer');
+  const avatarInput = document.getElementById('avatarInput');
+
+  // Abrir Modal
+  const openModal = () => {
+    // Cerrar drawer móvil si está abierto
+    const drawer = document.getElementById('drawer');
+    if (drawer && !drawer.classList.contains('hidden')) {
+      document.getElementById('closeDrawer').click();
+    }
+
+    if (currentUser) {
+      // Mostrar perfil
+      profileModal.classList.remove('hidden');
+      setTimeout(() => {
+        profileModal.classList.remove('opacity-0');
+        profileModal.querySelector('div').classList.remove('scale-95');
+      }, 10);
+    } else {
+      // Mostrar login/registro
+      authModal.classList.remove('hidden');
+      setTimeout(() => {
+        authModal.classList.remove('opacity-0');
+        authModal.querySelector('div').classList.remove('scale-95');
+      }, 10);
+    }
+  };
+
+  if (authTrigger) authTrigger.addEventListener('click', openModal);
+  if (mobileAuthLink) mobileAuthLink.addEventListener('click', openModal);
+
+  // Cerrar Modals
+  const closeModal = (modal) => {
+    modal.classList.add('opacity-0');
+    modal.querySelector('div').classList.add('scale-95');
+    setTimeout(() => modal.classList.add('hidden'), 300);
+  };
+
+  if (closeAuthModal) closeAuthModal.addEventListener('click', () => closeModal(authModal));
+  if (closeProfileModal) closeProfileModal.addEventListener('click', () => closeModal(profileModal));
+
+  // Tareas de pestañas en Auth Modal
+  if (tabLogin && tabRegister && loginForm && registerForm) {
+    tabLogin.addEventListener('click', () => {
+      tabLogin.className = 'flex-1 pb-3 text-center font-bold text-primary dark:text-primary-fixed border-b-2 border-primary dark:border-primary-fixed';
+      tabRegister.className = 'flex-1 pb-3 text-center text-on-surface-variant dark:text-tertiary-fixed-dim border-b-2 border-transparent';
+      loginForm.classList.remove('hidden');
+      registerForm.classList.add('hidden');
+    });
+
+    tabRegister.addEventListener('click', () => {
+      tabRegister.className = 'flex-1 pb-3 text-center font-bold text-primary dark:text-primary-fixed border-b-2 border-primary dark:border-primary-fixed';
+      tabLogin.className = 'flex-1 pb-3 text-center text-on-surface-variant dark:text-tertiary-fixed-dim border-b-2 border-transparent';
+      registerForm.classList.remove('hidden');
+      loginForm.classList.add('hidden');
+    });
+  }
+
+  // Enviar Login
+  if (loginForm) {
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const btnText = document.getElementById('loginBtnText');
+
+      btnText.textContent = 'Ingresando...';
+      try {
+        const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        showNotification('👋 ¡Bienvenido de nuevo!');
+        closeModal(authModal);
+        loginForm.reset();
+      } catch (err) {
+        alert(`Error al iniciar sesión: ${err.message}`);
+      } finally {
+        btnText.textContent = 'Ingresar';
+      }
+    });
+  }
+
+  // Enviar Registro
+  if (registerForm) {
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const nombre = document.getElementById('registerNombre').value.trim();
+      const apellido = document.getElementById('registerApellido').value.trim();
+      const telefono = document.getElementById('registerTelefono').value.trim();
+      const email = document.getElementById('registerEmail').value.trim();
+      const password = document.getElementById('registerPassword').value;
+      const btnText = document.getElementById('registerBtnText');
+
+      btnText.textContent = 'Registrando...';
+      try {
+        const { error } = await supabaseClient.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { nombre, apellido, telefono, email }
+          }
+        });
+        if (error) throw error;
+        showNotification('📧 ¡Cuenta creada! Verificá tu email para activar.');
+        closeModal(authModal);
+        registerForm.reset();
+      } catch (err) {
+        alert(`Error al registrarse: ${err.message}`);
+      } finally {
+        btnText.textContent = 'Registrarse';
+      }
+    });
+  }
+
+  // Guardar Datos del Perfil
+  if (profileForm) {
+    profileForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const nombre = document.getElementById('profileNombre').value.trim();
+      const apellido = document.getElementById('profileApellido').value.trim();
+      const telefono = document.getElementById('profileTelefono').value.trim();
+      const btnText = document.getElementById('saveProfileBtnText');
+
+      btnText.textContent = 'Guardando...';
+      try {
+        const { error } = await supabaseClient
+          .from('profiles')
+          .update({ nombre, apellido, telefono })
+          .eq('id', currentUser.id);
+
+        if (error) throw error;
+        showNotification('✅ Perfil actualizado correctamente');
+        await loadUserProfile(currentUser.id);
+      } catch (err) {
+        alert(`Error al guardar perfil: ${err.message}`);
+      } finally {
+        btnText.textContent = 'Guardar Cambios';
+      }
+    });
+  }
+
+  // Cambiar Contraseña
+  if (changePasswordForm) {
+    changePasswordForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const password = document.getElementById('newPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const btnText = document.getElementById('changePasswordBtnText');
+
+      if (password !== confirmPassword) {
+        alert('Las contraseñas no coinciden.');
+        return;
+      }
+
+      btnText.textContent = 'Actualizando...';
+      try {
+        const { error } = await supabaseClient.auth.updateUser({ password });
+        if (error) throw error;
+        showNotification('🔑 Contraseña actualizada correctamente');
+        changePasswordForm.reset();
+      } catch (err) {
+        alert(`Error al cambiar contraseña: ${err.message}`);
+      } finally {
+        btnText.textContent = 'Actualizar Contraseña';
+      }
+    });
+  }
+
+  // Cerrar Sesión
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+      try {
+        await supabaseClient.auth.signOut();
+        showNotification('🚪 Sesión cerrada correctamente');
+        closeModal(profileModal);
+      } catch (err) {
+        alert(`Error al cerrar sesión: ${err.message}`);
+      }
+    });
+  }
+
+  // Carga de Foto de Perfil (Avatar)
+  if (avatarClickContainer && avatarInput) {
+    avatarClickContainer.addEventListener('click', () => avatarInput.click());
+    
+    avatarInput.addEventListener('change', async () => {
+      if (avatarInput.files.length === 0) return;
+      const file = avatarInput.files[0];
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${currentUser.id}/avatar.${fileExt}`;
+      const avatarStatus = document.getElementById('avatarStatus');
+
+      avatarStatus.textContent = 'Subiendo foto...';
+
+      try {
+        // Subir archivo al bucket de avatars
+        const { error: uploadError } = await supabaseClient.storage
+          .from('avatars')
+          .upload(filePath, file, { upsert: true });
+
+        if (uploadError) throw uploadError;
+
+        // Obtener URL pública
+        const { data: { publicUrl } } = supabaseClient.storage
+          .from('avatars')
+          .getPublicUrl(filePath);
+
+        // Actualizar URL en la tabla de profiles
+        const { error: updateError } = await supabaseClient
+          .from('profiles')
+          .update({ avatar_url: publicUrl })
+          .eq('id', currentUser.id);
+
+        if (updateError) throw updateError;
+
+        showNotification('📸 Foto de perfil actualizada');
+        await loadUserProfile(currentUser.id);
+      } catch (err) {
+        alert(`Error al subir imagen: ${err.message}`);
+      } finally {
+        avatarStatus.textContent = 'Hacé click para cambiar tu foto';
+      }
+    });
+  }
+}
+
 // 10. Inicialización al cargar el DOM
 document.addEventListener('DOMContentLoaded', () => {
   initDarkMode();
@@ -700,5 +1051,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initMobileDrawer();
   initScrollAnimations();
   initActiveNavigation();
+  initAuthSystem(); // Inicializar Supabase Auth
 });
 
