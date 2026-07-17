@@ -1,7 +1,33 @@
--- Script SQL para configurar Autenticación, Perfiles y Storage en Supabase
--- Ejecutar en: Supabase Dashboard → SQL Editor → New Query
+-- Script SQL Completo y Unificado para Panadería Sandrita
+-- Este script crea la tabla 'pedidos', la tabla 'profiles', configura la autenticación y las políticas de Storage.
+-- Ejecutar en: Supabase Dashboard → SQL Editor → New Query y presionar "Run".
 
--- 1. Crear tabla de perfiles (profiles) vinculada a auth.users
+-- Habilitar extensión UUID
+create extension if not exists "uuid-ossp";
+
+-- 1. Crear tabla principal 'pedidos' si no existe
+create table if not exists public.pedidos (
+  id               uuid        primary key default uuid_generate_v4(),
+  nombre           text        not null,
+  telefono         text        not null,
+  email            text        not null,
+  producto         text        not null,
+  fecha_retiro     date        not null,
+  tipo_entrega     text        not null default 'retiro',
+  direccion_envio  text,
+  mensaje          text,
+  estado           text        not null default 'pendiente',
+  created_at       timestamptz default now()
+);
+
+-- Índices de pedidos
+create index if not exists idx_pedidos_fecha_retiro on public.pedidos (fecha_retiro);
+create index if not exists idx_pedidos_estado on public.pedidos (estado);
+
+-- IMPORTANTE: Desactivar RLS en pedidos para permitir que cualquier cliente (anónimo o no) registre pedidos
+alter table public.pedidos disable row level security;
+
+-- 2. Crear tabla de perfiles (profiles) vinculada a auth.users
 create table if not exists public.profiles (
   id           uuid        primary key references auth.users(id) on delete cascade,
   nombre       text,
@@ -12,7 +38,7 @@ create table if not exists public.profiles (
   created_at   timestamptz default now()
 );
 
--- Habilitar RLS en profiles
+-- Habilitar RLS en profiles (solo lectura/escritura propia)
 alter table public.profiles enable row level security;
 
 -- Eliminar políticas viejas si existen
@@ -26,7 +52,7 @@ create policy "Permitir lectura propia" on public.profiles
 create policy "Permitir actualización propia" on public.profiles
   for update using (auth.uid() = id);
 
--- 2. Función trigger para crear automáticamente el perfil al registrarse
+-- 3. Función trigger para crear automáticamente el perfil al registrarse un usuario
 create or replace function public.handle_new_user()
 returns trigger as $$
 begin
@@ -48,11 +74,11 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
 
--- 3. Relacionar la tabla de pedidos con profiles agregando user_id
+-- 4. Relacionar la tabla de pedidos con profiles agregando user_id
 alter table public.pedidos 
   add column if not exists user_id uuid references public.profiles(id) on delete set null;
 
--- 4. Configurar Bucket de Storage 'avatars'
+-- 5. Configurar Bucket de Storage 'avatars' para las fotos de perfil
 insert into storage.buckets (id, name, public)
 values ('avatars', 'avatars', true)
 on conflict (id) do nothing;
