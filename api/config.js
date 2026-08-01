@@ -13,7 +13,7 @@ export default function handler(req, res) {
   // La SUPABASE_URL viene de la env var
   // La SUPABASE_ANON_KEY es la clave pública (anon) — diferente al service_role key del backend
   return res.status(200).json({
-    supabaseUrl: process.env.SUPABASE_URL || null,
-    supabaseKey: process.env.SUPABASE_ANON_KEY || null,
+    supabaseUrl: (process.env.SUPABASE_URL || '').trim(),
+    supabaseKey: (process.env.SUPABASE_ANON_KEY || '').trim(),
   });
 }
