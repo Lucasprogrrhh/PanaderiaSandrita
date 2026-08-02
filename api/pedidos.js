@@ -5,7 +5,7 @@
 import { supabase } from '../lib/supabase.js';
 import { validarPedido } from '../lib/validate.js';
 import { generarLinkWhatsApp } from '../lib/whatsapp.js';
-import { enviarEmailConfirmacion } from '../lib/email.js';
+import { enviarEmailConfirmacion, enviarAlertaAdmin } from '../lib/email.js';
 
 /**
  * POST /api/pedidos
@@ -120,15 +120,26 @@ export default async function handler(req, res) {
     const whatsappUrl = generarLinkWhatsApp(datosPedido);
     console.log('[Pedidos] Link de WhatsApp generado correctamente.');
 
-    // ─── 7. Enviar email de confirmación al cliente ──────────────────────────
-    // No bloqueamos la respuesta si el email falla: el pedido YA fue guardado.
-    const { ok: emailOk, error: errorEmail } = await enviarEmailConfirmacion(datosPedido);
+    // ─── 7. Enviar email de confirmación al cliente y alerta al admin ────────
+    // No bloqueamos la respuesta si los emails fallan: el pedido YA fue guardado.
+    const [resultadoCliente, resultadoAdmin] = await Promise.allSettled([
+      enviarEmailConfirmacion(datosPedido),
+      enviarAlertaAdmin(datosPedido),
+    ]);
+
+    const emailOk = resultadoCliente.status === 'fulfilled' && resultadoCliente.value?.ok;
+    const alertaOk = resultadoAdmin.status === 'fulfilled' && resultadoAdmin.value?.ok;
 
     if (!emailOk) {
-      // Loguear el error pero no fallar la respuesta al cliente
-      console.warn('[Pedidos] El email de confirmación no pudo enviarse:', errorEmail);
+      console.warn('[Pedidos] El email de confirmación al cliente no pudo enviarse:', resultadoCliente.reason || resultadoCliente.value?.error);
     } else {
       console.log(`[Pedidos] Email de confirmación enviado a ${datosPedido.email}`);
+    }
+
+    if (!alertaOk) {
+      console.warn('[Pedidos] La alerta por email al administrador no pudo enviarse:', resultadoAdmin.reason || resultadoAdmin.value?.error);
+    } else {
+      console.log('[Pedidos] Alerta por email al administrador enviada con éxito');
     }
 
     // ─── 8. Respuesta exitosa ────────────────────────────────────────────────
