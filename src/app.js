@@ -984,13 +984,20 @@ function setupAuthEventListeners() {
 
   // Cerrar Sesión
   if (logoutBtn) {
-    logoutBtn.addEventListener('click', async () => {
+    logoutBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
       try {
-        await supabaseClient.auth.signOut();
+        if (supabaseClient) {
+          await supabaseClient.auth.signOut();
+        }
+      } catch (err) {
+        console.warn('[Auth] Error al cerrar sesión en Supabase:', err);
+      } finally {
+        currentUser = null;
+        currentProfile = null;
+        updateUserUI(null);
         showNotification('🚪 Sesión cerrada correctamente');
         closeModal(profileModal);
-      } catch (err) {
-        alert(`Error al cerrar sesión: ${err.message}`);
       }
     });
   }
